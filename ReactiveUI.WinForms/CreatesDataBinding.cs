@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 namespace ReactiveUI.WinForms {
     public interface ICreatesDataBinding {
-        int GetAffinityForObject(Type type);
+        int GetAffinityForObject(Type type, string targetPropertyName);
 
-        IDisposable BindPropertyToObject(INotifyPropertyChanged source, string propertyName, object target);
+        IDisposable BindPropertyToObject(INotifyPropertyChanged source, string propertyName, object target, string targetPropertyName);
     }
 
     public static class CreatesEventDataBinding {
@@ -61,12 +62,26 @@ namespace ReactiveUI.WinForms {
         }
     }
 
-    public class CreatesTextBoxDataBinding : ICreatesDataBinding {
-        public int GetAffinityForObject(Type type) {
-            return type == typeof(TextBox) ? 5 : 0;
+    public class CreatesWinFormsDataBinding : ICreatesDataBinding {
+        public int GetAffinityForObject(Type type, string targetPropertyName) {
+            return typeof(Control).IsAssignableFrom(type) ? 2 : 0;
         }
 
-        public IDisposable BindPropertyToObject(INotifyPropertyChanged source, string propertyName, object target) {
+        public IDisposable BindPropertyToObject(INotifyPropertyChanged source, string propertyName, object target, string targetPropertyName) {
+            var ctl = target as Control;
+            var binding = ctl.DataBindings.Add(targetPropertyName, source, propertyName);
+            return Disposable.Create(() => {
+                ctl.DataBindings.Remove(binding);
+            });
+        }
+    }
+
+    public class CreatesTextBoxDataBinding : ICreatesDataBinding {
+        public int GetAffinityForObject(Type type, string targetPropertyName) {
+            return (type == typeof(TextBox) && targetPropertyName == "Text") ? 5 : 0;
+        }
+
+        public IDisposable BindPropertyToObject(INotifyPropertyChanged source, string propertyName, object target, string targetPropertyName) {
             return CreatesEventDataBinding.BindPropertyToObjectWithInvoke(source, propertyName, target as Control,
                 (t, v) => { (target as TextBox).Text = v as string; },
                 t => Observable.FromEventPattern<EventHandler, EventArgs>(h => h.Invoke, h => (t as TextBox).TextChanged += h, h => (t as TextBox).TextChanged -= h),

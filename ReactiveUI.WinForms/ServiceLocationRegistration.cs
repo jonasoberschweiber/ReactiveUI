@@ -11,6 +11,7 @@ namespace ReactiveUI.WinForms {
             RxApp.Register(typeof(CreatesCommandBindingViaEvent), typeof(ICreatesCommandBinding));
             RxApp.Register(typeof(CreatesCommandBindingWithEnabledViaEvent), typeof(ICreatesCommandBinding));
             RxApp.Register(typeof(CreatesTextBoxDataBinding), typeof(ICreatesDataBinding));
+            RxApp.Register(typeof(CreatesWinFormsDataBinding), typeof(ICreatesDataBinding));
         }
 
     }
