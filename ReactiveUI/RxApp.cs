@@ -381,6 +381,7 @@ namespace ReactiveUI
                 "ReactiveUI.Android",
                 "ReactiveUI.NLog",
                 "ReactiveUI.Mobile",
+                "ReactiveUI.WinForms"
             };
 
 #if WINRT || WP8

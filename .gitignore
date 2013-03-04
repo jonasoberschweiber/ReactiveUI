@@ -18,3 +18,4 @@ Release
 NuGet-Release
 
 *.nupkg
+packages/
