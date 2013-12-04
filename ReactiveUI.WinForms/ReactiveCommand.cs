@@ -27,6 +27,10 @@ namespace ReactiveUI.WinForms {
             canExecute = canExecute.ObserveOn(scheduler ?? RxApp.DeferredScheduler);
             commonCtor(scheduler, initialCondition);
 
+            canExecute.Subscribe(b => {
+                LogHost.Default.Warn("{1} CANEXECUTE DIRECT: {0}", b, GetHashCode());
+            });
+
             _inner = canExecute.Subscribe(
                 _canExecuteSubject.OnNext, 
                 _exSubject.OnNext);
@@ -107,8 +111,18 @@ namespace ReactiveUI.WinForms {
             this.scheduler = scheduler ?? RxApp.DeferredScheduler;
 
             _canExecuteSubject = new ScheduledSubject<bool>(RxApp.DeferredScheduler);
+            _canExecuteSubject.Subscribe(b => {
+                LogHost.Default.Warn("{1} CANEXECUTE SUBJECT: {0}", b, GetHashCode());
+            });
+            new ObservableAsPropertyHelper<bool>(_canExecuteSubject,
+                b => LogHost.Default.Warn("{1} CANEXECUTE OAPH: {0}", b, GetHashCode()),
+                initialCondition, scheduler);
+            LogHost.Default.Warn("HASH CODE: {0}, TYPE: {1}", GetHashCode(), GetType().FullName);
             canExecuteLatest = new ObservableAsPropertyHelper<bool>(_canExecuteSubject,
-                b => { if (CanExecuteChanged != null) CanExecuteChanged(this, EventArgs.Empty); },
+                b => {
+                    LogHost.Default.Warn("CANEXECUTE OPAH EVT {0} {1} {2}", b, CanExecuteChanged == null ? "null" : "present", this.GetHashCode());
+                    if (CanExecuteChanged != null) CanExecuteChanged(this, EventArgs.Empty);
+                },
                 initialCondition, scheduler);
 
             _canExecuteProbed = new Subject<object>();

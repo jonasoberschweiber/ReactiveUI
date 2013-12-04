@@ -128,6 +128,8 @@ namespace ReactiveUI.WinForms {
                     };
                 }
                 ret.Add(rc.CanExecuteObservable.Subscribe(b => {
+                    if (!ctl.IsHandleCreated) // The control/the control's handle might not exist anymore.
+                        return;
                     ctl.Invoke(new MethodInvoker(() => {
                         enabledField.SetValue(target, b, new object[] { });
                     }));

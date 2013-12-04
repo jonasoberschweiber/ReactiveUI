@@ -170,6 +170,8 @@ namespace ReactiveUI
                     Value = (TValue)x.Value,
                 });
 
+            r.Subscribe(change => System.Diagnostics.Debug.WriteLine(change));
+
             return r.DistinctUntilChanged(x=>x.Value);
         }
 

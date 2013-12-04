@@ -27,4 +27,37 @@ namespace ReactiveUI.WinForms
 
         ISubject<Unit> AsyncCompletedNotification { get; }
     }
+
+    public interface INavigateCommand : IReactiveCommand { }
+
+    public interface IRoutingState : IReactiveNotifyPropertyChanged {
+        ReactiveCollection<IRoutableViewModel> NavigationStack { get; }
+
+        IReactiveCommand NavigateBack { get; }
+
+        INavigateCommand Navigate { get; }
+
+        INavigateCommand NavigateAndReset { get; }
+    }
+
+    public interface IRoutableViewModel : IReactiveNotifyPropertyChanged {
+        string UrlPathSegment { get; }
+
+        IScreen HostScreen { get; }
+    }
+
+    public interface IScreen {
+        IRoutingState Router { get; }
+    }
+
+    public class ViewContractAttribute : Attribute {
+        public string Contract { get; set; }
+    }
+
+    public static class ObservableUtils {
+        public static IConnectableObservable<T> PermaRef<T>(this IConnectableObservable<T> This) {
+            This.Connect();
+            return This;
+        }
+    }
 }
