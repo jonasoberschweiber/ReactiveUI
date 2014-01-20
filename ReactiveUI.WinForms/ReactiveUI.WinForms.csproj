@@ -70,6 +70,7 @@
     <Compile Include="CreatesCommandBinding.cs" />
     <Compile Include="CreatesDataBinding.cs" />
     <Compile Include="DataBinding.cs" />
+    <Compile Include="Errors.cs" />
     <Compile Include="EventHelper.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
