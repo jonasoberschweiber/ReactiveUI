@@ -69,6 +69,10 @@ namespace ReactiveUI.WinForms {
                     // Make sure that the view is created on the UI thread.
                     EnsureHandleCreated(() => {
                         this.Invoke(new MethodInvoker(() => {
+                            if (Content != null) {
+                                Content.Dispose();
+                            }
+
                             var view = RxRouting.ResolveView(vm);
                             view.ViewModel = vm;
                             Content = (Control)view;
