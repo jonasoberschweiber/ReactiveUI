@@ -27,10 +27,6 @@ namespace ReactiveUI.WinForms {
             canExecute = canExecute.ObserveOn(scheduler ?? RxApp.DeferredScheduler);
             commonCtor(scheduler, initialCondition);
 
-            canExecute.Subscribe(b => {
-                LogHost.Default.Warn("{1} CANEXECUTE DIRECT: {0}", b, GetHashCode());
-            });
-
             _inner = canExecute.Subscribe(
                 _canExecuteSubject.OnNext, 
                 _exSubject.OnNext);
